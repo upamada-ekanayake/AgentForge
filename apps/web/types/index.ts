@@ -49,6 +49,31 @@ export type Application = {
   updated_at: string;
 };
 
+export type AgentRunStatus =
+  | "pending"
+  | "running"
+  | "succeeded"
+  | "failed"
+  | "canceled";
+
+export type AgentRun = {
+  id: string;
+  workspace_id: string;
+  user_id: string;
+  application_id: string | null;
+  run_type: string;
+  status: AgentRunStatus;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AgentRunDetail = AgentRun & {
+  input_payload: Record<string, unknown> | null;
+  output_payload: Record<string, unknown> | null;
+};
+
 export type DocumentStatus = "uploaded" | "processing" | "ready" | "failed";
 
 export type Document = {

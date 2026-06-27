@@ -1,4 +1,6 @@
 import type {
+  AgentRun,
+  AgentRunDetail,
   ApiHealthResponse,
   Document,
   InternshipMatchGraphResponse,
@@ -79,6 +81,14 @@ export function getInternshipPosts() {
 
 export function getDocuments() {
   return apiRequest<Document[]>({ path: "/documents" });
+}
+
+export function getAgentRuns() {
+  return apiRequest<AgentRun[]>({ path: "/agents/runs?limit=30" });
+}
+
+export function getAgentRun(runId: string) {
+  return apiRequest<AgentRunDetail>({ path: `/agents/runs/${runId}` });
 }
 
 export function uploadDocument({

@@ -1,8 +1,11 @@
 import uuid
 from datetime import datetime
 from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.models.enums import AgentRunStatus
 
 
 class PlannerTaskType(StrEnum):
@@ -35,6 +38,26 @@ class AgentRegistryItem(BaseModel):
     run_type: str
     description: str
     enabled: bool
+
+
+class AgentRunRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    workspace_id: uuid.UUID
+    user_id: uuid.UUID
+    application_id: uuid.UUID | None
+    run_type: str
+    status: AgentRunStatus
+    started_at: datetime | None
+    completed_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AgentRunDetail(AgentRunRead):
+    input_payload: dict[str, Any] | None
+    output_payload: dict[str, Any] | None
 
 
 class PlannerInput(BaseModel):

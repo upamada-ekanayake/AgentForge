@@ -1,10 +1,5 @@
-import { RoutePlaceholder } from "@/components/layout/route-placeholder";
+import { AgentRunsClient } from "@/components/agent-runs/agent-runs-client";
 
 export default function AgentRunsPage() {
-  return (
-    <RoutePlaceholder
-      title="Agent Runs"
-      description="Agent run history, steps, and logs will appear here once the agent pipeline exists."
-    />
-  );
+  return <AgentRunsClient />;
 }

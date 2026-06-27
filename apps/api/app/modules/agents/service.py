@@ -1,6 +1,8 @@
+import uuid
 from datetime import UTC, datetime
 
 from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.agents.context_builder import build_context
@@ -59,6 +61,33 @@ from app.modules.internships.service import (
 )
 from app.modules.users.models import User
 from app.modules.workspaces.service import ensure_workspace_access
+
+
+async def list_agent_runs(
+    session: AsyncSession,
+    skip: int,
+    limit: int,
+    workspace_id: uuid.UUID | None = None,
+    run_type: str | None = None,
+) -> list[AgentRun]:
+    statement = select(AgentRun).order_by(AgentRun.created_at.desc())
+    if workspace_id is not None:
+        statement = statement.where(AgentRun.workspace_id == workspace_id)
+    if run_type is not None:
+        statement = statement.where(AgentRun.run_type == run_type)
+
+    result = await session.scalars(statement.offset(skip).limit(limit))
+    return list(result)
+
+
+async def get_agent_run(session: AsyncSession, run_id: uuid.UUID) -> AgentRun:
+    agent_run = await session.get(AgentRun, run_id)
+    if agent_run is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Agent run not found.",
+        )
+    return agent_run
 
 
 async def run_planner(

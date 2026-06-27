@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, status
+import uuid
+
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db_session
@@ -6,6 +8,8 @@ from app.agents.pipeline_state import InternshipMatchGraphRunResponse
 from app.modules.agents import service
 from app.modules.agents.schemas import (
     AgentRegistryItem,
+    AgentRunDetail,
+    AgentRunRead,
     ContextBuilderInput,
     ContextBuilderRunResponse,
     EvidenceAnalyzerInput,
@@ -36,6 +40,33 @@ async def list_agent_registry() -> list[AgentRegistryItem]:
         AgentRegistryItem.model_validate(config.model_dump())
         for config in list_agent_configs()
     ]
+
+
+@router.get("/runs", response_model=list[AgentRunRead])
+async def list_agent_runs(
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    workspace_id: uuid.UUID | None = None,
+    run_type: str | None = None,
+    session: AsyncSession = Depends(get_db_session),
+) -> list[AgentRunRead]:
+    agent_runs = await service.list_agent_runs(
+        session=session,
+        skip=skip,
+        limit=limit,
+        workspace_id=workspace_id,
+        run_type=run_type,
+    )
+    return [AgentRunRead.model_validate(agent_run) for agent_run in agent_runs]
+
+
+@router.get("/runs/{run_id}", response_model=AgentRunDetail)
+async def get_agent_run(
+    run_id: uuid.UUID,
+    session: AsyncSession = Depends(get_db_session),
+) -> AgentRunDetail:
+    agent_run = await service.get_agent_run(session, run_id)
+    return AgentRunDetail.model_validate(agent_run)
 
 
 @router.post(
