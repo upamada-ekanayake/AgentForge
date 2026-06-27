@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+venv/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+dist/
+build/
+coverage/
+apps/web/output/
+apps/web/.playwright-cli/
+*.log
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Docker volumes and local data
+postgres_data/
+redis_data/
+qdrant_data/
+storage/documents/*
+!storage/documents/.gitkeep

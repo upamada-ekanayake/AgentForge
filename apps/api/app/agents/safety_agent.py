@@ -1,0 +1,2 @@
+"""Safety agent placeholder."""
+
