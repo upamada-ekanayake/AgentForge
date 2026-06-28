@@ -196,3 +196,34 @@ def make_output_validation_input() -> Callable[
         )
 
     return factory
+
+
+import httpx
+from app.core.database import AsyncSessionLocal, engine, get_db_session
+from app.main import app
+
+@pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"
+
+@pytest.fixture
+async def db_session():
+    async with engine.connect() as conn:
+        transaction = await conn.begin()
+        async with AsyncSessionLocal(bind=conn) as session:
+            yield session
+            await transaction.rollback()
+
+@pytest.fixture
+async def client(db_session):
+    async def override_get_db_session():
+        yield db_session
+    
+    app.dependency_overrides[get_db_session] = override_get_db_session
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app),
+        base_url="http://testserver",
+    ) as ac:
+        yield ac
+    app.dependency_overrides.clear()
+

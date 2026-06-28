@@ -1,20 +1,17 @@
 # Agent Design
 
-AgentForge will use a staged agent workflow after the core product foundation is complete.
+AgentForge uses narrow, inspectable agent contracts for CV-to-internship
+matching. The current production-style workflow is deterministic first:
 
-## Planned Agents
+```text
+Planner
+  -> Retriever
+  -> Evidence Analyzer
+  -> Context Builder
+  -> Match Report Generator
+```
 
-- Planner Agent: decomposes the user task into steps.
-- RAG Agent: retrieves relevant document and internship context.
-- Tool Agent: calls internal tools and services.
-- Safety Agent: checks outputs and sensitive operations.
-- Evaluator Agent: reviews quality and produces final scoring or feedback.
-
-## First AI Use Case
-
-Compare a candidate CV against an internship post and return a structured match summary.
-
-AI implementation is intentionally deferred until the application foundation, database models, document upload, and internship CRUD are in place.
+The LLM layer is optional and remains separate from the main scoring path.
 
 ## LLM Adapter Layer
 
@@ -209,7 +206,7 @@ behavior.
 ## Shared Pipeline State
 
 `app/agents/pipeline_state.py` defines `InternshipPipelineState`, a shared state
-container for the future LangGraph migration.
+container used by the experimental LangGraph pipeline.
 
 The state can hold:
 
@@ -226,9 +223,8 @@ The state can hold:
 - current stage
 - completed stages
 
-The current manual pipeline does not use this state yet. It exists so LangGraph
-can later orchestrate the existing agents without changing each agent's business
-logic.
+The manual pipeline does not use this state directly. LangGraph uses it to
+orchestrate the existing agents without changing each agent's business logic.
 
 ## Experimental LangGraph Pipeline
 
@@ -263,3 +259,21 @@ Conditional stops:
 
 The graph currently excludes LLM reasoning and output validation. It exists to
 prove orchestration can move to LangGraph without rewriting the agent logic.
+
+## Agent Execution Visualizer
+
+Agent execution is visible in the frontend at:
+
+```text
+/agent-runs
+```
+
+The page reads stored agent runs through:
+
+```text
+GET /agents/runs
+GET /agents/runs/{id}
+```
+
+It shows a selectable node graph, timeline fallback, parent payload, and selected
+stage payload. This keeps observability separate from orchestration behavior.

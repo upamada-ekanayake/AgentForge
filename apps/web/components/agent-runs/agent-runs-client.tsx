@@ -532,6 +532,11 @@ export function AgentRunsClient() {
                 <div className="h-24 animate-pulse rounded-lg bg-muted" />
                 <div className="h-24 animate-pulse rounded-lg bg-muted" />
               </>
+            ) : runsQuery.error ? (
+              <p className="text-sm leading-6 text-muted-foreground">
+                Agent run history is unavailable while the backend cannot be
+                reached.
+              </p>
             ) : runs.length === 0 ? (
               <p className="text-sm leading-6 text-muted-foreground">
                 No agent runs yet. Run an internship match or ranking workflow
@@ -586,6 +591,14 @@ export function AgentRunsClient() {
             <CardContent>
               {runDetailQuery.isLoading ? (
                 <div className="h-64 animate-pulse rounded-lg bg-muted" />
+              ) : runDetailQuery.error ? (
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Could not load the selected run details.
+                </p>
+              ) : !selectedRunId ? (
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Select a run to inspect its execution graph.
+                </p>
               ) : stages.length === 0 ? (
                 <p className="text-sm leading-6 text-muted-foreground">
                   This run has no output payload yet.

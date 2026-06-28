@@ -1,15 +1,29 @@
 # AgentForge
 
-AgentForge is a monorepo for a portfolio-grade AI internship workflow platform.
+[![Backend CI](https://github.com/upamada-ekanayake/AgentForge/actions/workflows/backend.yml/badge.svg)](https://github.com/upamada-ekanayake/AgentForge/actions/workflows/backend.yml)
+[![Frontend CI](https://github.com/upamada-ekanayake/AgentForge/actions/workflows/frontend.yml/badge.svg)](https://github.com/upamada-ekanayake/AgentForge/actions/workflows/frontend.yml)
 
-This first step only establishes the project foundation:
+AgentForge is a portfolio-grade AI internship workflow platform. It combines a
+Next.js frontend, FastAPI backend, PostgreSQL, Qdrant vector search, document
+processing, deterministic agent workflows, optional LLM infrastructure, and an
+agent execution visualizer.
 
-- `apps/web`: Next.js frontend skeleton
-- `apps/api`: FastAPI backend skeleton
+Reviewer links:
+
+- [Architecture](docs/architecture.md)
+- [Agent Design](docs/agent-design.md)
+- [Database Design](docs/database.md)
+- [Demo Script](docs/demo-script.md)
+- [Roadmap](ROADMAP.md)
+
+Repository layout:
+
+- `apps/web`: Next.js frontend
+- `apps/api`: FastAPI backend
 - `packages/shared`: shared types and constants
-- `packages/prompts`: reusable agent prompt assets
+- `packages/prompts`: reusable and versioned prompt assets
 - `infra`: local infrastructure configuration
-- `docs`: architecture, database, and agent design notes
+- `docs`: architecture, database, demo, and agent design notes
 
 ## Prerequisites
 
@@ -118,11 +132,15 @@ GET /applications
 GET /applications/{id}
 PATCH /applications/{id}?request_user_id={user_id}
 GET /agents/registry
+GET /agents/runs
+GET /agents/runs/{id}
 POST /agents/planner/plan
 POST /agents/evidence-analyzer/analyze
 POST /agents/llm-reasoner/reason
 POST /agents/output-validator/validate
+POST /agents/internship-match/run
 POST /agents/internship-match-graph/run
+POST /agents/internship-rank/run
 ```
 
 Uploaded documents are stored locally in `storage/documents/`. The API accepts
@@ -212,8 +230,8 @@ Agent registry example:
 curl http://localhost:8000/agents/registry
 ```
 
-The backend also defines a shared `InternshipPipelineState` model for the future
-LangGraph migration. It is not connected to the current pipeline yet.
+The backend also defines a shared `InternshipPipelineState` model used by the
+experimental LangGraph pipeline.
 
 An experimental LangGraph pipeline is available separately:
 
@@ -239,6 +257,19 @@ npm install
 npm.cmd --workspace apps/web run dev
 ```
 
+Main frontend routes:
+
+```text
+/dashboard
+/documents
+/internship-match
+/internship-rank
+/agent-runs
+```
+
+The Agent Execution Visualizer at `/agent-runs` shows recent agent runs, a
+pipeline node graph, a timeline fallback, and input/output payload inspection.
+
 ## CI
 
 CI runs on every push and pull request through GitHub Actions:
@@ -248,17 +279,23 @@ CI runs on every push and pull request through GitHub Actions:
 | `.github/workflows/backend.yml` | Python 3.12 | install requirements, `compileall`, `pytest -q`, `pytest --cov=app` |
 | `.github/workflows/frontend.yml` | Node.js 20 | `npm ci`, frontend typecheck, frontend lint |
 
-## Build Order
+## Current Status
 
-1. Create monorepo
-2. Setup Docker Compose
-3. Setup PostgreSQL
-4. Setup FastAPI
-5. Setup Next.js
-6. Connect frontend to backend
-7. Add database models
-8. Add document upload
-9. Add internship post CRUD
-10. Add simple CV/job matching logic
-11. Add Qdrant RAG
-12. Add LangGraph agents
+Completed:
+
+- Core full-stack platform
+- PostgreSQL schema and migrations
+- Document upload, parsing, chunking, embeddings, and Qdrant indexing
+- Manual deterministic internship match pipeline
+- Experimental LangGraph pipeline
+- Workspace-wide internship ranking
+- Optional LLM adapter, prompt/model/provider registries, and output validator
+- Agent registry and agent execution visualizer
+- Backend and frontend CI
+- Unit test foundation
+
+Current hardening focus:
+
+- deterministic registry tests
+- opt-in integration tests
+- deployment preparation

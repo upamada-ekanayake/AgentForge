@@ -58,6 +58,7 @@ Current screens include:
 - document upload and document table
 - internship match workflow
 - workspace-wide internship ranking
+- agent execution visualizer
 
 The frontend uses:
 
@@ -73,6 +74,10 @@ The internship match page supports two execution modes:
 
 Both modes display the result in the same UI so the orchestration strategy can
 change without changing the user experience.
+
+The Agent Execution Visualizer at `/agent-runs` reads stored `agent_runs` and
+shows recent runs, a selectable pipeline node graph, a compact timeline fallback,
+and JSON payload inspection for parent and child agent runs.
 
 ## Backend
 
@@ -95,6 +100,7 @@ The backend provides:
 - deterministic agent contracts
 - optional LLM reasoning contracts
 - agent run logging
+- read-only agent run inspection endpoints
 
 ## Data Stores
 
@@ -304,6 +310,26 @@ AgentForge includes four lightweight registries:
 
 These registries keep orchestration, prompting, model choice, and provider choice
 replaceable without rewriting agent business logic.
+
+## Observability
+
+AgentForge records workflow and agent execution in `agent_runs`. The frontend
+visualizer uses:
+
+```text
+GET /agents/runs
+GET /agents/runs/{id}
+```
+
+to display:
+
+- recent parent and child runs
+- stage status
+- manual pipeline and LangGraph execution paths
+- selected node payloads
+- parent input/output payloads
+
+This is intentionally read-only. It does not change pipeline behavior.
 
 ## Current Limitations
 

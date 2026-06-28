@@ -239,6 +239,27 @@ The ranking workflow applies the same deterministic match logic across active
 internship posts in the workspace and sorts them by match score.
 ```
 
+### 7. Show Agent Execution Visualizer
+
+Go to the Agent Runs page.
+
+Show:
+
+- recent parent and child agent runs
+- execution graph
+- timeline fallback
+- selected stage payload
+- parent input/output payload
+
+Explain:
+
+```text
+AgentForge stores each workflow and agent execution as an agent_run. The
+visualizer turns those logs into an inspectable execution graph so reviewers can
+see what happened at each stage instead of treating the agent workflow as a
+black box.
+```
+
 ## Two-Minute Demo Version
 
 Use this when the interviewer asks for a quick overview.
@@ -269,7 +290,7 @@ If showing the UI, spend the time like this:
 - 30 seconds: document upload/indexing explanation
 - 45 seconds: manual internship match result
 - 20 seconds: switch to LangGraph and show completed stages
-- 5 seconds: mention ranking and next steps
+- 5 seconds: open Agent Runs and mention the execution visualizer
 
 ## Five-Minute Demo Version
 
@@ -433,9 +454,9 @@ future LLM layer something stable to validate against.
 
 Recommended next steps:
 
-1. Add automated backend and frontend tests for the current workflows.
-2. Add GitHub Actions for backend compile/tests and frontend lint/typecheck.
-3. Build an Agent Execution Visualizer from agent run and pipeline state data.
+1. Add more deterministic registry tests.
+2. Expand opt-in integration tests for full backend workflows.
+3. Add portfolio screenshots and deployment notes.
 4. Add JWT authentication and workspace ownership enforcement.
 5. Move document parsing, embedding, and Qdrant indexing to background jobs.
 6. Improve retrieval with hybrid search and reranking.
@@ -453,5 +474,6 @@ A reviewer should be able to verify:
 - LangGraph internship match completes the same core workflow
 - weak retrieval can stop the pipeline before report generation
 - internship ranking works across workspace internships
+- agent runs can be inspected through the visualizer
 - LLM infrastructure exists but is not overclaimed as part of the main pipeline
 - current limitations are clearly documented

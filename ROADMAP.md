@@ -8,7 +8,7 @@ orchestration.
 The current focus is:
 
 ```text
-Testing + CI/CD
+Testing + deployment readiness
 ```
 
 The project already has enough AI architecture for the MVP. The next priority is
@@ -24,8 +24,8 @@ reviewers to trust.
 | Phase 3 | Deterministic Agents | Completed |
 | Phase 4 | LangGraph Orchestration | Completed |
 | Phase 5 | Testing | In Progress |
-| Phase 6 | CI/CD | Planned |
-| Phase 7 | Agent Execution Visualizer | Planned |
+| Phase 6 | CI/CD | Completed |
+| Phase 7 | Agent Execution Visualizer | Completed |
 | Phase 8 | Authentication | Planned |
 | Phase 9 | Background Processing | Planned |
 | Phase 10 | Deployment | Planned |
@@ -133,9 +133,14 @@ Initial test targets:
 5. Match Report Generator.
 6. Retrieval Quality.
 7. Output Validator.
-8. Prompt Registry.
-9. Model Registry.
-10. Provider Registry.
+8. Registry tests for prompts, models, providers, and agents.
+
+Current status:
+
+- 54 unit tests pass.
+- One integration pipeline test exists and is opt-in because it requires a
+  running PostgreSQL test database.
+- Coverage is tracked with `pytest --cov=app --cov-report=term-missing`.
 
 Near-term success criteria:
 
@@ -147,7 +152,7 @@ Near-term success criteria:
 
 ## Phase 6 - CI/CD
 
-Status: Planned
+Status: Completed
 
 Goal:
 
@@ -155,31 +160,27 @@ Goal:
 Make every push and pull request run quality checks automatically.
 ```
 
-Planned checks:
+Current checks:
 
-- Backend formatting check.
-- Backend linting.
-- Backend type checks.
+- Backend dependency install.
+- Backend compile check.
 - Backend tests.
-- Frontend linting.
+- Backend coverage run.
+- Frontend dependency install.
 - Frontend typecheck.
-- Future Playwright end-to-end tests.
-- Future Docker build validation.
+- Frontend lint.
 
-Target tools:
+Future additions:
 
 - Ruff.
 - Black.
 - mypy.
-- pytest.
-- ESLint.
-- TypeScript.
 - Playwright.
-- GitHub Actions.
+- Docker build validation.
 
 ## Phase 7 - Agent Execution Visualizer
 
-Status: Planned
+Status: Completed
 
 Goal:
 
@@ -187,7 +188,7 @@ Goal:
 Make agent observability visible in the product UI.
 ```
 
-Planned viewer:
+Current viewer:
 
 ```text
 User Query
@@ -200,7 +201,16 @@ User Query
   -> Output Validator
 ```
 
-Each stage should eventually show:
+Current implementation:
+
+- recent agent run list
+- selectable node graph
+- timeline fallback
+- input/output payload inspection
+- manual pipeline and LangGraph pipeline support
+- empty, loading, and error states
+
+Each stage should eventually also show:
 
 - status
 - duration
@@ -212,8 +222,6 @@ Each stage should eventually show:
 - retained and discarded evidence
 - prompt name and version for LLM stages
 - model/provider metadata for LLM stages
-
-This is expected to become the main portfolio demo feature after tests and CI.
 
 ## Phase 8 - Authentication
 
